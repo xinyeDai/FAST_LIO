@@ -1,6 +1,8 @@
 common:
     lid_topic:  "/velodyne_points"
+    # lid_topic:  "/points_raw"
     imu_topic:  "/imu/data"
+    # imu_topic:  "/imu_raw"
     time_sync_en: false         # ONLY turn on when external time synchronization is really not possible
     time_offset_lidar_to_imu: 0.0 # Time offset between lidar and IMU calibrated by other algorithms, e.g. LI-Init (can be found in README).
                                   # This param will take effect no matter what time_sync_en is. So if the time offset is not known exactly, please set as 0.0
@@ -19,14 +21,26 @@ mapping:
     b_gyr_cov: 0.0001
     fov_degree:    180
     det_range:     100.0
-    extrinsic_est_en:  false      # true: enable the online estimation of IMU-LiDAR extrinsic,
-    extrinsic_T: [ 0, 0, 0.28]
-    extrinsic_R: [ 1, 0, 0, 
-                   0, 1, 0, 
-                   0, 0, 1]
+    extrinsic_est_en:  true      # true: enable the online estimation of IMU-LiDAR extrinsic,
+    # extrinsic_T: [ 0, 0, 0.28]
+    # extrinsic_R: [ 1, 0, 0, 
+    #                0, 1, 0, 
+    #                0, 0, 1]
+    #   NCLT 2013-01 在线估计结果:
+    # extrinsic_T: [ 0.0492883, -0.126851, 0.658067]
+    # extrinsic_R: [ 0.999771, -0.0198966, -0.00787293, 
+    #                0.01954, 0.998882, -0.043046, 
+    #                0.00872059, 0.0428823, 0.999042]
+
+    #   NCLT 2013-02:
+    #   NCLT rostopic: velodyne_points:
+    extrinsic_T: [ 0.002, -0.004, -0.957]
+    extrinsic_R: [ -0.012269305293716, 0.999825046159671, -0.014118825001462, 
+                     -0.999920531909150, -0.012308942481016, -0.002723931262439, 
+                    -0.002897242505046, 0.014084282261136, 0.999896614145210]
 
 publish:
-    path_en:  false
+    path_en:  true
     scan_publish_en:  true       # false: close all the point cloud output
     dense_publish_en: true       # false: low down the points number in a global-frame point clouds scan.
     scan_bodyframe_pub_en: true  # true: output the point cloud scans in IMU-body-frame

@@ -87,3 +87,9 @@ catkin_package(
 add_executable(fastlio_mapping src/laserMapping.cpp include/ikd-Tree/ikd_Tree.cpp src/preprocess.cpp)
 target_link_libraries(fastlio_mapping ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${PYTHON_LIBRARIES})
 target_include_directories(fastlio_mapping PRIVATE ${PYTHON_INCLUDE_DIRS})
+
+## Declare a C++ executable
+add_executable(${PROJECT_NAME}_groundtruth_tum src/groundTruth2tum.cpp)
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME}_groundtruth_tum ${catkin_LIBRARIES})

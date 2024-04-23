@@ -585,6 +585,7 @@ void publish_odometry(const ros::Publisher & pubOdomAftMapped)
 {
     odomAftMapped.header.frame_id = "camera_init";
     odomAftMapped.child_frame_id = "body";
+    ROS_INFO("lidar_end_time: %lf \n", lidar_end_time);
     odomAftMapped.header.stamp = ros::Time().fromSec(lidar_end_time);// ros::Time().fromSec(lidar_end_time);
     set_posestamp(odomAftMapped.pose);
     pubOdomAftMapped.publish(odomAftMapped);
@@ -611,6 +612,28 @@ void publish_odometry(const ros::Publisher & pubOdomAftMapped)
     q.setY(odomAftMapped.pose.pose.orientation.y);
     q.setZ(odomAftMapped.pose.pose.orientation.z);
     transform.setRotation( q );
+
+    std::ofstream file("/home/xyd/Project/fastlio_ws/src/FAST_LIO/trajectory/fast_lio_trajectory.txt", std::ios::app);
+    ROS_INFO("odomAftMapped.header.stamp: %lf \n", odomAftMapped.header.stamp.toSec());
+    file << odomAftMapped.header.stamp << " ";
+    if (file.is_open())
+    {
+        // Write the values to the file
+        file << odomAftMapped.pose.pose.position.x << " " 
+             << odomAftMapped.pose.pose.position.y << " " 
+             << odomAftMapped.pose.pose.position.z << " " 
+             << odomAftMapped.pose.pose.orientation.x << " " 
+             << odomAftMapped.pose.pose.orientation.y << " " 
+             << odomAftMapped.pose.pose.orientation.z << " "
+             << odomAftMapped.pose.pose.orientation.w << std::endl;
+
+        // Close the file
+        file.close();
+    }
+    else
+    {
+        ROS_ERROR("Failed to open the file: %s", std::strerror(errno));
+    }
     br.sendTransform( tf::StampedTransform( transform, odomAftMapped.header.stamp, "camera_init", "body" ) );
 }
 
@@ -958,6 +981,10 @@ int main(int argc, char** argv)
             geoQuat.y = state_point.rot.coeffs()[1];
             geoQuat.z = state_point.rot.coeffs()[2];
             geoQuat.w = state_point.rot.coeffs()[3];
+
+            std::cout << "*****************************************" << std::endl;
+            std::cout << state_point.offset_R_L_I.toRotationMatrix() << std::endl;
+            std::cout << state_point.offset_T_L_I.transpose() << std::endl;
 
             double t_update_end = omp_get_wtime();
 
